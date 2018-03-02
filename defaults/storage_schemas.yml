@@ -1,0 +1,4 @@
+go_carbon_retention_configs:
+  default:
+    pattern: ".*"
+    retentions: "60s:3d,15m:30d,1h:1y"

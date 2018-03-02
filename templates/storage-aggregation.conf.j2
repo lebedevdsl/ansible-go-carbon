@@ -1,0 +1,10 @@
+# Documentation:
+# http://graphite.readthedocs.io/en/latest/config-carbon.html#storage-aggregation-conf
+
+{% for name, conf in go_carbon_storage_aggregations.iteritems(): %}
+[{{ name }}]
+pattern = {{ conf['pattern'] }}.
+xFilesFactor = {{ conf['xfilesfactor'] }}
+aggregationMethod = {{ conf['aggregationmethod'] }}
+
+{% endfor %}

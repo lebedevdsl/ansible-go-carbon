@@ -1,0 +1,36 @@
+---
+# tasks file for lebedevdsl.go-carbon
+- name: "Install package"
+  yum:
+    name: "{{ go_carbon_package }}"
+    state: present
+
+- name: "Put configurations into place"
+  template:
+    src: templates/{{ item }}.j2
+    dest: "{{ go_carbon_config_dir }}/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+  - go-carbon.conf
+  - storage-schemas.conf
+  - storage-aggregation.conf
+
+- name: "Put systemd configuration into place"
+  template:
+    src: templates/go-carbon.service.j2
+    dest: /usr/lib/systemd/system/go-carbon.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: ['reload systemd']
+
+- name: "Notify handlers now"
+  meta: flush_handlers
+
+- name: "Start service"
+  service:
+    name: go-carbon
+    state: started
+    enabled: true

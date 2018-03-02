@@ -1,0 +1,5 @@
+go_carbon_storage_aggregations:
+  default:
+    pattern: ".*"
+    xfilesfactor: "0.0"
+    aggregationmethod: "average"

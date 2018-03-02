@@ -1,0 +1,4 @@
+---
+# handlers file for lebedevdsl.go-carbon
+- name: reload systemd
+  command: systemctl daemon-reload

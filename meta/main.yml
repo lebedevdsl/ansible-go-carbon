@@ -1,0 +1,6 @@
+galaxy_info:
+  author: Dmitry Lebedev
+  description: lebedevdsl@gmail.com
+  min_ansible_version: 2.0
+  galaxy_tags: []
+dependencies: []

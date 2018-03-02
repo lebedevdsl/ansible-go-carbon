@@ -1,0 +1,138 @@
+[common]
+# Run as user. Works only in daemon mode
+user = "{{ go_carbon_user | default('carbon') }}"
+# Prefix for store all internal go-carbon graphs. Supported macroses: {host}
+graph-prefix = "{{ go_carbon_graphite_prefix | default('carbon.agents.{host}') }}"
+# Endpoint for store internal carbon metrics. Valid values: "" or "local", "tcp://host:port", "udp://host:port"
+metric-endpoint = "{{ go_carbon_metric_endpoint | default('local') }}"
+# Interval of storing internal metrics. Like CARBON_METRIC_INTERVAL
+metric-interval = "{{ go_carbon_metric_interval | default('1m0s') }}"
+# Increase for configuration with multi persister workers
+max-cpu = {{ go_carbon_max_cpu | default(4) }}
+
+[whisper]
+data-dir = "{{ go_carbon_data_dir | default('/var/lib/graphite/whisper') }}"
+# http://graphite.readthedocs.org/en/latest/config-carbon.html#storage-schemas-conf. Required
+schemas-file = "{{ go_carbon_config_dir }}/storage-schemas.conf"
+# http://graphite.readthedocs.org/en/latest/config-carbon.html#storage-aggregation-conf. Optional
+aggregation-file = "{{ go_carbon_config_dir }}/storage-aggregation.conf"
+# Worker threads count. Metrics sharded by "crc32(metricName) % workers"
+workers = {{ go_carbon_workers | default(8) }}
+# Limits the number of whisper update_many() calls per second. 0 - no limit
+max-updates-per-second = {{ go_carbon_max_updates_per_second | default(0) }}
+# Sparse file creation
+sparse-create = {{ go_carbon_sparse_create | default('false') }}
+enabled = {{ go_carbon_whisper_enabled | default('true') }}
+
+[cache]
+# Limit of in-memory stored points (not metrics)
+max-size = {{ go_carbon_cache_max_size | default(1000000) }}
+# Capacity of queue between receivers and cache
+# Strategy to persist metrics. Values: "max","sorted","noop"
+#   "max" - write metrics with most unwritten datapoints first
+#   "sorted" - sort by timestamp of first unwritten datapoint.
+#   "noop" - pick metrics to write in unspecified order,
+#            requires least CPU and improves cache responsiveness
+write-strategy = "{{ go_carbon_cache_write_strategy | default('max') }}"
+
+[udp]
+listen = "{{ go_carbon_udp_listen | default(':2003') }}"
+enabled = {{ go_carbon_udp_enabled | default('true') }}
+# Enable optional logging of incomplete messages (chunked by max UDP packet size)
+log-incomplete = {{ go_carbon_udp_log_incomplete | default('false') }}
+# Optional internal queue between receiver and cache
+buffer-size = {{ go_carbon_udp_buffer_size | default(0) }}
+
+[tcp]
+listen = "{{ go_carbon_tcp_listen | default(':2003') }}"
+enabled = {{ go_carbon_tcp_enabled | default('true') }}
+# Optional internal queue between receiver and cache
+buffer-size = {{ go_carbon_tcp_buffer_size | default(0) }}
+
+[pickle]
+listen = "{{ go_carbon_pickle_listen | default(':2004') }}"
+# Limit message size for prevent memory overflow
+max-message-size = {{ go_carbon_pickle_max_message_size | default('67108864') }}
+enabled = {{ go_carbon_pickle_enabled | default('true') }}
+# Optional internal queue between receiver and cache
+buffer-size = {{ go_pickle_buffer_size | default('0') }}
+
+[carbonlink]
+listen = "{{ go_carbon_carbonlink_listen | default('127.0.0.1:7002') }}"
+enabled = {{ go_carbon_carbonlink_enabled | default('true') }}
+# Close inactive connections after "read-timeout"
+read-timeout = "{{ go_carbon_carbonlink_read_timeout | default('30s') }}"
+
+[carbonserver]
+# Please NOTE: carbonserver is not intended to fully replace graphite-web
+# It acts as a "REMOTE_STORAGE" for graphite-web or carbonzipper/carbonapi
+listen = "{{ go_carbon_carbonserver_listen | default('127.0.0.1:8083') }}"
+# Carbonserver support is still experimental and may contain bugs
+# Or be incompatible with github.com/grobian/carbonserver
+enabled = {{ go_carbon_carbonserver_enabled | default('true') }}
+# Buckets to track response times
+buckets = {{ go_carbon_carbonserver_buckets | default(10) }}
+# carbonserver-specific metrics will be sent as counters
+# For compatibility with grobian/carbonserver
+metrics-as-counters = {{ go_carbon_carbonserver_metrics_as_counters | default('false') }}
+# Read and Write timeouts for HTTP server
+read-timeout = "{{ go_carbon_carbonserver_read_timeout | default('60s') }}"
+write-timeout = "{{ go_carbon_carbonserver_write_timeout | default('60s') }}"
+# Enable /render cache, it will cache the result for 1 minute
+query-cache-enabled = {{ go_carbon_carbonserver_query_cache_enabled | default('true') }}
+# 0 for unlimited
+query-cache-size-mb = {{ go_carbon_carbonserver_query_cache_size_mb | default(0) }}
+# Enable /metrics/find cache, it will cache the result for 5 minutes
+find-cache-enabled = {{ go_carbon_carbonserver_find_cache_enabled | default('true') }}
+# Control trigram index
+#  This index is used to speed-up /find requests
+#  However, it will lead to increased memory consumption
+#  Estimated memory consumption is approx. 500 bytes per each metric on disk
+#  Another drawback is that it will recreate index every scan-frequency interval
+#  All new/deleted metrics will still be searchable until index is recreated
+trigram-index = {{ go_carbon_carbonserver_trigram_index | default('true') }}
+# carbonserver keeps track of all available whisper files
+# in memory. This determines how often it will check FS
+# for new or deleted metrics.
+scan-frequency = "{{ go_carbon_carbonserver_scan_frequency | default('5m0s') }}"
+# Maximum amount of globs in a single metric in index
+# This value is used to speed-up /find requests with
+# a lot of globs, but will lead to increased memory consumption
+max-globs = {{ go_carbon_carbonserver_max_globs | default(100) }}
+# graphite-web-10-mode
+# Use Graphite-web 1.0 native structs for pickle response
+# This mode will break compatibility with graphite-web 0.9.x
+# If false, carbonserver won't send graphite-web 1.0 specific structs
+# That might degrade performance of the cluster
+# But will be compatible with both graphite-web 1.0 and 0.9.x
+graphite-web-10-strict-mode = {{ go_carbon_carbonserver_graphite_web_10_strict_mode | default('true') }}
+
+[dump]
+# Enable dump/restore function on USR2 signal
+enabled = {{ go_carbon_dump_enabled | default('false') }}
+# Directory for store dump data. Should be writeable for carbon
+path = "{{ go_carbon_dump_path | default('/var/lib/graphite/dump/') }}"
+# Restore speed. 0 - unlimited
+restore-per-second = {{ go_carbon_dump_restore_per_second | default(0) }}
+
+[pprof]
+listen = "{{ go_carbon_pprof_listen | default('localhost:7007') }}"
+enabled = {{ go_carbon_pprof_enabled | default('false') }}
+
+# Default logger
+[[logging]]
+# logger name
+# available loggers:
+# * "" - default logger for all messages without configured special logger
+# @TODO
+logger = "{{ go_carbon_log_default_logger | default('') }}"
+# Log output: filename, "stderr", "stdout", "none", "" (same as "stderr")
+file = "{{ go_carbon_log_default_log_file | default('/var/log/go-carbon/go-carbon.log') }}"
+# Log level: "debug", "info", "warn", "error", "dpanic", "panic", and "fatal"
+level = "{{ go_carbon_log_default_level | default('info') }}"
+# Log format: "json", "console", "mixed"
+encoding = "{{ go_carbon_log_default_encoding | default('mixed') }}"
+# Log time format: "millis", "nanos", "epoch", "iso8601"
+encoding-time = "{{ go_carbon_log_default_encoding_time | default('iso8601') }}"
+# Log duration format: "seconds", "nanos", "string"
+encoding-duration = "{{ go_carbon_log_default_encoding_duration | default('seconds') }}"

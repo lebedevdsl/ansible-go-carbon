@@ -1,0 +1,9 @@
+# Documentation:
+# http://graphite.readthedocs.io/en/latest/config-carbon.html#storage-schemas-conf
+
+{% for name, conf in go_carbon_retention_configs.iteritems(): %}
+[{{ name }}]
+pattern = {{ conf['pattern'] }}
+retentions = {{ conf['retentions'] }}
+
+{% endfor %}

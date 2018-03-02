@@ -1,0 +1,67 @@
+---
+# defaults file for lebedevdsl.go-carbon
+go_carbon_package: "go-carbon"
+go_carbon_config_dir: "/etc/go-carbon"
+go_carbon_schemas_file: "{{ go_carbon_config_dir }}/storage-schemas.conf"
+go_carbon_aggregation_file: "{{ go_carbon_config_dir}}/storage-aggregation.conf"
+
+go_carbon_user: "carbon"
+go_carbon_graphite_prefix: "carbon.agents.{host}"
+go_carbon_metric_endpoint: "local"
+go_carbon_metric_interval: "1m0s"
+go_carbon_max_cpu: 4
+
+go_carbon_data_dir: "/var/lib/graphite/whisper"
+go_carbon_workers: 8
+go_carbon_max_updates_per_second: 0
+go_carbon_sparse_create: "false"
+go_carbon_whisper_enabled: "true"
+
+go_carbon_cache_max_size: 1000000
+go_carbon_cache_write_strategy: "max"
+
+go_carbon_udp_enabled: "true"
+go_carbon_udp_listen: ":2003"
+go_carbon_udp_log_incomplete: "false"
+go_carbon_udp_buffer_size: 0
+
+go_carbon_tcp_enabled: "true"
+go_carbon_tcp_listen: ":2003"
+go_carbon_tcp_buffer_size: 0
+
+go_carbon_pickle_enabled: "true"
+go_carbon_pickle_listen: ":2004"
+go_carbon_pickle_max_message_size: 67108864
+go_carbon_pickle_buffer_size: 0
+
+go_carbon_carbonlink_enabled: "true"
+go_carbon_carbonlink_listen: "127.0.0.1:7002"
+go_carbon_carbonlink_read_timeout: "30s"
+
+go_carbon_carbonserver_enabled: "true"
+go_carbon_carbonserver_query_cache_enabled: "true"
+go_carbon_carbonserver_query_cache_size_mb: 0
+go_carbon_carbonserver_find_cache_enabled: "true"
+go_carbon_carbonserver_listen: "127.0.0.1:8003"
+go_carbon_carbonserver_buckets: 10
+go_carbon_carbonserver_metrics_as_counters: "false"
+go_carbon_carbonserver_read_timeout: "60s"
+go_carbon_carbonserver_write_timeout: "60s"
+go_carbon_carbonserver_trigram_index: "true"
+go_carbon_carbonserver_scan_frequency: "5m0s"
+go_carbon_carbonserver_max_globs: 100
+go_carbon_carbonserver_graphite_web_10_strict_mode: "true"
+
+go_carbon_dump_enabled: "true"
+go_carbon_dump_path: "/var/lib/graphite/dump"
+go_carbon_dump_restore_per_second: 0
+
+go_carbon_pprof_enabled: "false"
+go_carbon_pprof_listen: "localhost:7007"
+
+go_carbon_log_default_logger: ""
+go_carbon_log_default_log_file: "/var/log/go-carbon/go-carbon.log"
+go_carbon_log_default_level: "info"
+go_carbon_log_default_encoding: "mixed"
+go_carbon_log_default_encoding_time: "iso8601"
+go_carbon_log_default_encoding_duration: "seconds"
